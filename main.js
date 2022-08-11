@@ -20,15 +20,27 @@ const render = () => {
     return `
       <div class="row news">
         <div class="col-lg-4">
-          <img class="news-img-size" src="${item.media}" />
+          <img class="news-img-size"
+            src="${
+              item.media || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU"
+            }" />
         </div>
         <div class="col-lg-8">
           <h2>${item.title}</h2>
           <p>
-            ${item.summary}
+            ${
+              item.summary == null || item.summary == ""
+                ? "내용없음"
+                : item.summary.length > 200
+                ? item.summary.substring(0, 200) + "..."
+                : item.summary
+            }
           </p>
           <div>
-            ${item.author} * ${item.published_date}
+            ${item.rights || "no source"}
+            ${moment(
+              item.published_date
+            ).fromNow()}
           </div>
         </div>
       </div>
