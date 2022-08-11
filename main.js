@@ -7,13 +7,27 @@ let searchButton = document.getElementById("search-button");
 let url;
 
 const getNews = async () => {
-  let header = new Headers({"x-api-key": "v9Fz5l2IIKZyclPPgr6hPOps1U-hswFhiqNdMN8mplE"});
+  try {
+    let header = new Headers({"x-api-key": "v9Fz5l2IIKZyclPPgr6hPOps1U-hswFhiqNdMN8mplE"});
 
-  let response = await fetch(url, {headers: header});
-  let data = await response.json();
-  news = data.articles;
+    let response = await fetch(url, {headers: header});
+    let data = await response.json();
 
-  render();
+    if (response.status == 200) {
+      console.log("받은 데이터는", data);
+      if (data.total_hits == 0) {
+        throw new Error("검색된 결과값이 없습니다.");
+      }
+      news = data.articles;
+      console.log(news);
+      render();
+    } else {
+      throw new Error(data.message);
+    }
+  } catch (error) {
+    console.log(error.message);
+    errorRender(error.message);
+  }  
 };
 
 const getLatestNews = async () => {
@@ -75,6 +89,11 @@ const render = () => {
   }).join("");
   
   document.getElementById("news-board").innerHTML = newsHTML;
+};
+
+const errorRender = (message) => {
+  let errorHTML = `<div class="alert alert-danger text-center" role="alert">${message}</div>`;
+  document.getElementById("news-board").innerHTML = errorHTML;
 };
 
 searchButton.addEventListener("click", getNewsByKeyword);
